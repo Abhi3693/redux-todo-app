@@ -1,45 +1,44 @@
-let todoInput = document.querySelector('.todo-input');
 let rootElm = document.querySelector('.todo-list');
-let deleteTodo = document.querySelector('.delete-todo');
-let todoCheckbox = document.querySelector('.todo-checkbox');
-let todoText = document.querySelector('.todo-text');
-let singleTodo = document.querySelector('.single-todo');
+let todoInput = document.querySelector('.todo-input');
 let todoSearch = document.querySelector('.todo-search');
 
-let todos = JSON.parse(localStorage.getItem('todos')) || [];
-
 let store = Redux.createStore(reducer);
+let todos = JSON.parse(localStorage.getItem('todos')) || state.getState();
 
-let handleLocalStorage = (todos) => {
-  localStorage.setItem('todos', JSON.stringify(todos));
-  renderUI(JSON.parse(localStorage.getItem('todos')) || todos);
+// Add todo
+let handleAddTODO = (event) => {
+  let value = event.target.value;
+  if (event.keyCode === 13 && value) {
+    let todo = { name: value, isDone: false };
+    store.dispatch({ type: 'add', todo });
+    event.target.value = '';
+  }
 };
 
-todoInput.addEventListener('keyup', (event) => {
-  store.dispatch({ type: 'add', event });
-});
+todoInput.addEventListener('keyup', handleAddTODO);
 
+// search todo
 todoSearch.addEventListener('keyup', (event) => {
   if (event.target.value !== '') {
     let searchVal = todos.filter((t) => {
-      return t.todoText.startsWith(event.target.value);
+      return t.name.startsWith(event.target.value);
     });
     renderUI(searchVal.length ? searchVal : todos);
   }
   if (event.target.value === '') {
-    handleLocalStorage(todos);
+    renderUI(todos);
   }
 });
 
 store.subscribe(() => {
-  todos = store.getState();
-  handleLocalStorage(todos);
+  renderUI(todos);
+  localStorage.setItem(`todos`, JSON.stringify(todos));
 });
 
 function renderUI(arr = todos) {
   rootElm.innerHTML = '';
   arr.forEach((todo, index) => {
-    // Create Element and class
+    // Create Element and add class
     let todoText = document.createElement('span');
     todoText.classList.add('todo-text');
 
@@ -53,17 +52,18 @@ function renderUI(arr = todos) {
     input.type = 'checkbox';
     input.classList.add('input-checkbox');
 
-    // Event Listener
+    // Delete todo
     span.addEventListener('click', (event) => {
       store.dispatch({ type: 'delete', index });
     });
 
+    // Toggle isDone
     input.addEventListener('click', (event) => {
       store.dispatch({ type: 'toggle', index });
     });
 
     // Append Element
-    todoText.innerText = todo.todoText;
+    todoText.innerText = todo.name;
     input.checked = todo.isDone;
     span.innerText = 'X';
 
@@ -72,32 +72,17 @@ function renderUI(arr = todos) {
   });
 }
 
-function reducer(state = todos, action) {
-  switch (action.type) {
-    case 'delete':
-      state = state.filter((t, i) => {
-        if (i !== action.index) {
-          return t;
-        }
-      });
-      return state;
-      break;
-    case 'toggle':
-      state[action.index].isDone = !state[action.index].isDone;
-      return state;
-      break;
-    case 'add':
-      if (action.event.keyCode === 13 && action.event.target.value !== '') {
-        state.push({ isDone: false, todoText: action.event.target.value });
-        action.event.target.value = '';
-      }
-      return state;
-      break;
-
-    default:
-      return state;
-      break;
+function reducer(state = [], action) {
+  if (action.type === 'delete') {
+    todos.splice(action.index, 1);
   }
+  if (action.type === 'add') {
+    todos.push(action.todo);
+  }
+  if (action.type === 'toggle') {
+    todos[action.index].isDone = !todos[action.index].isDone;
+  }
+  return state;
 }
 
 renderUI(todos);
