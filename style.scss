@@ -1,0 +1,69 @@
+body {
+  background-color: aliceblue;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande',
+    'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+.todo {
+  padding: 4rem;
+  border: 2px solid lightblue;
+  width: 50%;
+  margin: 5rem auto;
+  box-shadow: 0 4px 10px lightgray;
+}
+.heading {
+  color: rgb(7, 116, 189);
+  margin: 0rem auto 2rem auto;
+  text-align: center;
+}
+.todo-input {
+  width: 80%;
+  margin: 1rem auto 0 auto;
+  display: block;
+  padding: 10px 20px;
+  border: 2px solid lightgray;
+  font-size: 1.2rem;
+  border-radius: 5px;
+  &:focus {
+    outline: none;
+    border: 2px solid rgb(107, 107, 107);
+  }
+  &::placeholder {
+    color: rgb(205, 205, 205);
+  }
+}
+.todo-list {
+  list-style: none;
+  width: 85%;
+  margin: auto;
+  padding: 0;
+  margin-bottom: 3rem;
+}
+.single-todo {
+  width: 100%;
+  padding: 10px 0;
+  margin: 10px 0;
+  display: flex;
+  gap: 2rem;
+  border-bottom: 1px solid lightgray;
+}
+.delete-todo {
+  font-size: 0.7rem;
+  font-weight: 800;
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  padding: 5px;
+}
+.todo-checkbox {
+  width: 20px;
+  height: 20px;
+}
+.todo-text {
+  color: green;
+  font-size: 1.2rem;
+}
+.todo-search {
+  float: right;
+  margin: 1rem;
+  margin-right: 3rem;
+}
